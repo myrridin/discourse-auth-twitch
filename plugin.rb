@@ -32,9 +32,9 @@ class TwitchAuthenticator < ::Auth::Authenticator
     result.user = if current_info
                     User.where(id: current_info[:user_id]).first
                   else
-                    user = User.where(email: email).first
-                    if user
-                      ::PluginStore.set("twitch", "twitch_uid_#{data[:twitch_uid]}", {user_id: user.id })
+                    user_email = UserEmail.where(email: email).first
+                    if user_email
+                      ::PluginStore.set("twitch", "twitch_uid_#{data[:twitch_uid]}", {user_id: user_email.user.id })
                     end
                   end
 
