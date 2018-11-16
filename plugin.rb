@@ -28,10 +28,15 @@ class TwitchAuthenticator < ::Auth::Authenticator
     # plugin specific data storage
     current_info = ::PluginStore.get("twitch", "twitch_uid_#{twitch_uid}")
 
-    result.user =
-      if current_info
-        User.where(id: current_info[:user_id]).first
-      end
+    # Try to find a user by twitch id. If that fails, try to match on email and update an existing user.
+    result.user = if current_info
+                    User.where(id: current_info[:user_id]).first
+                  else
+                    user = User.where(email: email).first
+                    if user
+                      ::PluginStore.set("twitch", "twitch_uid_#{data[:twitch_uid]}", {user_id: user.id })
+                    end
+                  end
 
     result.username = username
     result.name = name
