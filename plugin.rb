@@ -36,6 +36,7 @@ class TwitchAuthenticator < ::Auth::Authenticator
                     if user_email
                       ::PluginStore.set("twitch", "twitch_uid_#{data[:twitch_uid]}", {user_id: user_email.user.id })
                     end
+                    user_email.user
                   end
 
     result.username = username
@@ -56,6 +57,10 @@ class TwitchAuthenticator < ::Auth::Authenticator
      CLIENT_ID,
      CLIENT_SECRET,
      scope: 'user_read'
+  end
+
+  def enabled?
+    true
   end
 end
 
