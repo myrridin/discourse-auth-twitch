@@ -43,12 +43,14 @@ class TwitchAuthenticator < ::Auth::Authenticator
     result.name = name
     result.email = email
     result.extra_data = { twitch_uid: twitch_uid }
+    result.user.update_attributes(external_id: twitch_uid)
 
     result
   end
 
   def after_create_account(user, auth)
     data = auth[:extra_data]
+    user.update_attributes(external_id: data[:twitch_uid])
     ::PluginStore.set("twitch", "twitch_uid_#{data[:twitch_uid]}", {user_id: user.id })
   end
 
